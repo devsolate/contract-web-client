@@ -8,11 +8,13 @@ import { Provider } from 'mobx-react';
 import { RouterStore, syncHistoryWithStore } from 'mobx-react-router';
 import { Router } from 'react-router';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import store from './stores'; 
 
 const browserHistory = createBrowserHistory();
 const routingStore = new RouterStore();
 const stores = {
-    routing: routingStore
+    routing: routingStore,
+    ...store
 };
 const history = syncHistoryWithStore(browserHistory, routingStore);
 

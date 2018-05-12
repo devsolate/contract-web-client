@@ -3,10 +3,13 @@ import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
+import { Route, Redirect } from 'react-router'
 import { withFormik } from 'formik';
 import './Register.scss';
 import LogoImage from './logo-white.png';
 import { Link } from 'react-router-dom';
+import { inject, observer } from 'mobx-react';
+import RefreshIndicator from 'material-ui/RefreshIndicator';
 
 const InnerForm = ({
     values,
@@ -62,9 +65,7 @@ const InnerForm = ({
 );
 
 const MyForm = withFormik({
-    // Transform outer props into form values
-    mapPropsToValues: props => ({ email: '', password: '' }),
-    // Add a custom validation function (this can be async too!)
+    mapPropsToValues: props => ({ email: '', password: '', name: '' }),
     validate: (values, props) => {
       const errors = {};
       if (!values.email) {
@@ -76,27 +77,15 @@ const MyForm = withFormik({
       }
       return errors;
     },
-    // Submission handler
     handleSubmit: (
       values,
       {
         props,
         setSubmitting,
-        setErrors /* setValues, setStatus, and other goodies */,
+        setErrors,
       }
     ) => {
-    //   RegisterToMyApp(values).then(
-    //     user => {
-    //       setSubmitting(false);
-    //       // do whatevs...
-    //       // props.updateUser(user)
-    //     },
-    //     errors => {
-    //       setSubmitting(false);
-    //       // Maybe even transform your API's errors into the same shape as Formik's!
-    //       setErrors(transformMyApiErrors(errors));
-    //     }
-    //   );
+        props.store.callApi(values)
     },
   })(InnerForm);
 
@@ -106,18 +95,31 @@ class Register extends Component {
         super(props)
 
         this.state = {}
+        this.store = props.register;
     }
     
     render() {
+        if (this.store.isRegisterSuccess) {
+            return <Redirect to='/login'/>;
+        }
+
         return (
             <section className="hero is-fullheight hero-container">
                 <div className="hero-body">
                     <div className="container has-text-centered">
                         <div className="column is-4 is-offset-4">
-                            <img src={LogoImage} className="logo-image" />
+                            <img src={LogoImage} className="logo-image" alt="Logo" />
                             <Card>
                                 <CardText>
-                                    <MyForm />
+                                    <MyForm store={this.store}/>
+                                    {
+                                        this.store.isLoading ? <RefreshIndicator
+                                            size={70}
+                                            left={0}
+                                            top={0}
+                                            status="loading"
+                                        /> : null
+                                    }
                                 </CardText>
                             </Card>
                             <div className="register-link-container">
@@ -131,4 +133,4 @@ class Register extends Component {
     }
 }
 
-export default Register;
+export default inject(['register'])(observer(Register));;

@@ -7,27 +7,32 @@ import { withFormik } from 'formik';
 import './Login.scss';
 import LogoImage from './logo-white.png';
 import { Link } from 'react-router-dom';
+import { inject, observer } from 'mobx-react';
+import RefreshIndicator from 'material-ui/RefreshIndicator';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
+import { Route, Redirect } from 'react-router';
 
-const InnerForm = ({
-    values,
-    errors,
-    touched,
-    handleChange,
-    handleBlur,
-    handleSubmit,
-    isSubmitting,
-  }) => (
+const InnerForm = (props) => {
+    const {
+        store,
+        values,
+        errors,
+        touched,
+        handleChange,
+        handleBlur,
+        handleSubmit,
+        isSubmitting,
+        setFieldValue
+    } = props
+    return (
     <form onSubmit={handleSubmit} className="form-container">
       <div>
-        <TextField
-            type="email"
-            name="email"
-            hintText="Email"
-            onChange={handleChange}
-            onBlur={handleBlur}
+        <SelectComponent
             value={values.email}
-            className="form-input"
-        />
+            onChange={setFieldValue}
+            items={store.users}
+         />
       </div>
       <div>
         <TextField
@@ -48,12 +53,13 @@ const InnerForm = ({
         labelColor="#FFFFFF"
         className="form-submit"/>
     </form>
-);
+)
+};
 
 const MyForm = withFormik({
-    // Transform outer props into form values
-    mapPropsToValues: props => ({ email: '', password: '' }),
-    // Add a custom validation function (this can be async too!)
+    mapPropsToValues: props => {
+        return ({ email: '', password: '' })
+    },
     validate: (values, props) => {
       const errors = {};
       if (!values.email) {
@@ -65,29 +71,58 @@ const MyForm = withFormik({
       }
       return errors;
     },
-    // Submission handler
     handleSubmit: (
       values,
       {
         props,
         setSubmitting,
-        setErrors /* setValues, setStatus, and other goodies */,
+        setErrors,
       }
     ) => {
-    //   LoginToMyApp(values).then(
-    //     user => {
-    //       setSubmitting(false);
-    //       // do whatevs...
-    //       // props.updateUser(user)
-    //     },
-    //     errors => {
-    //       setSubmitting(false);
-    //       // Maybe even transform your API's errors into the same shape as Formik's!
-    //       setErrors(transformMyApiErrors(errors));
-    //     }
-    //   );
+        props.store.auth(values)
     },
   })(InnerForm);
+
+class SelectComponent extends Component {
+    handleChange = (event, index, value) => {
+        this.props.onChange('email', value)
+    }
+
+    render() {
+        return (
+            <SelectField
+                floatingLabelText="Email"
+                value={this.props.value}
+                onChange={this.handleChange}
+                style={{
+                    fullWidth: true
+                }}
+                labelStyle={{
+                    textAlign: 'left'
+                }}
+                selectedMenuItemStyle={{
+                    textAlign: 'left'
+                }}
+                menuItemStyle={{
+                    textAlign: 'left'
+                }}
+                floatingLabelStyle={{
+                    left: '0'
+                }}
+            >
+                {
+                    this.props.items.map((item) => {
+
+                        return <MenuItem value={item}
+                            primaryText={item}
+                            key={item} 
+                            insetChildren={true}/>
+                    })
+                }
+            </SelectField>
+        )
+    }
+}
 
 class Login extends Component {
 
@@ -95,18 +130,32 @@ class Login extends Component {
         super(props)
 
         this.state = {}
+        this.store = props.auth;
+    }
+
+    componentDidMount() {
+        this.store.getUsers()
     }
     
     render() {
+        if(this.store.isRequireRegister) {
+            return <Redirect to='/register'/>;
+        }
+
+        if(this.store.isAuthorized) {
+            return <Redirect to='/'/>;
+        }
         return (
             <section className="hero is-fullheight hero-container">
                 <div className="hero-body">
                     <div className="container has-text-centered">
                         <div className="column is-4 is-offset-4">
-                            <img src={LogoImage} className="logo-image" />
+                            <img src={LogoImage} className="logo-image" alt="Logo" />
                             <Card>
                                 <CardText>
-                                    <MyForm />
+                                    {
+                                        this.store.users.length > 0 ? <MyForm store={this.store}/> : null
+                                    }
                                 </CardText>
                             </Card>
                             <div className="register-link-container">
@@ -120,4 +169,4 @@ class Login extends Component {
     }
 }
 
-export default Login;
+export default inject(['auth'])(observer(Login));;

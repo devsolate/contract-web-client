@@ -24,6 +24,7 @@ class App extends Component {
     }
 
     componentDidMount() {
+       console.log(window.sessionStorage.getItem("currentUser"));
     }
   render() {
     return (
