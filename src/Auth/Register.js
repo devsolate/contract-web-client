@@ -1,15 +1,13 @@
 import React, {Component} from 'react';
-import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
-import FlatButton from 'material-ui/FlatButton';
-import TextField from 'material-ui/TextField';
-import RaisedButton from 'material-ui/RaisedButton';
+import Card, { CardActions, CardContent } from 'material-ui-next/Card';
+import Button from 'material-ui-next/Button';
+import TextField from 'material-ui-next/TextField';
 import { Route, Redirect } from 'react-router'
 import { withFormik } from 'formik';
 import './Register.scss';
 import LogoImage from './logo-white.png';
 import { Link } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
-import RefreshIndicator from 'material-ui/RefreshIndicator';
 
 const InnerForm = ({
     values,
@@ -23,38 +21,41 @@ const InnerForm = ({
     <form onSubmit={handleSubmit} className="form-container">
         <div>
         <TextField
-            type="name"
-            name="name"
-            hintText="Full Name"
-            onChange={handleChange}
-            onBlur={handleBlur}
-            value={values.name}
-            className="form-input"
+          label="Name"
+          className="form-input"
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={values.password}
+          margin="normal"
+          type="text"
+          name="name"
         />
         </div>
       <div>
         <TextField
-            type="email"
-            name="email"
-            hintText="Email"
-            onChange={handleChange}
-            onBlur={handleBlur}
-            value={values.email}
-            className="form-input"
+          label="Email"
+          className="form-input"
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={values.password}
+          margin="normal"
+          type="email"
+          name="email"
         />
       </div>
       <div>
         <TextField
-            type="password"
-            name="password"
-            hintText="Password"
-            onChange={handleChange}
-            onBlur={handleBlur}
-            value={values.password}
-            className="form-input"
+          label="Password"
+          className="form-input"
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={values.password}
+          margin="normal"
+          type="password"
+          name="password"
         />
       </div>
-      <RaisedButton
+      <Button
         label="Register"
         type="submit"
         disabled={isSubmitting} 
@@ -110,17 +111,17 @@ class Register extends Component {
                         <div className="column is-4 is-offset-4">
                             <img src={LogoImage} className="logo-image" alt="Logo" />
                             <Card>
-                                <CardText>
+                                <CardContent>
                                     <MyForm store={this.store}/>
                                     {
-                                        this.store.isLoading ? <RefreshIndicator
-                                            size={70}
-                                            left={0}
-                                            top={0}
-                                            status="loading"
-                                        /> : null
+                                        // this.store.isLoading ? <RefreshIndicator
+                                        //     size={70}
+                                        //     left={0}
+                                        //     top={0}
+                                        //     status="loading"
+                                        // /> : null
                                     }
-                                </CardText>
+                                </CardContent>
                             </Card>
                             <div className="register-link-container">
                                 <Link to="/login"  className="register-link">Already have account? Sign-in</Link>

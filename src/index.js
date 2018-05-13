@@ -7,7 +7,7 @@ import registerServiceWorker from './registerServiceWorker';
 import { Provider } from 'mobx-react';
 import { RouterStore, syncHistoryWithStore } from 'mobx-react-router';
 import { Router } from 'react-router';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import { MuiThemeProvider, createMuiTheme } from 'material-ui-next/styles';
 import store from './stores'; 
 
 const browserHistory = createBrowserHistory();
@@ -18,11 +18,14 @@ const stores = {
 };
 const history = syncHistoryWithStore(browserHistory, routingStore);
 
+const themeV1 = createMuiTheme({
+    
+});
 
 ReactDOM.render(
     <Provider {...stores}>
       <Router history={history}>
-        <MuiThemeProvider>
+        <MuiThemeProvider theme={themeV1}>
             <App />
         </MuiThemeProvider>
       </Router>

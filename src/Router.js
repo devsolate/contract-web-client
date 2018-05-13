@@ -4,6 +4,7 @@ import Main from './Main/Main';
 import Contract from './Main/Contract';
 import NewContract from './Main/NewContract';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+console.log(Login)
 
 const routes = [
     {
@@ -21,7 +22,7 @@ const routes = [
       component: Main,
       routes: [
         {
-          path: "/new",
+          path: "/create",
           exact: true,
           component: NewContract
         },

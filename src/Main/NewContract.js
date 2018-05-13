@@ -1,5 +1,24 @@
-import React from 'react';
 
-const NewContract = () => <h3>Contract</h3>;
+import React, { Component } from 'react';
+import { BrowserRouter as Router, Route, Link, withRouter } from "react-router-dom";
+import AppBar from 'material-ui-next/AppBar';
+import { inject, observer } from 'mobx-react';
+class NewContract extends Component {
+    
+    constructor(props) {
+        super(props);
 
-export default NewContract
+        this.state = {}
+        this.store = props.contract;
+    }
+
+    render() {
+        return (
+            <div>
+                NewContract
+            </div>
+        )
+    }
+};
+
+export default inject(['contract'])(observer(NewContract));;

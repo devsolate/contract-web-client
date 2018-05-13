@@ -1,17 +1,29 @@
 import React, {Component} from 'react';
-import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
-import FlatButton from 'material-ui/FlatButton';
-import TextField from 'material-ui/TextField';
-import RaisedButton from 'material-ui/RaisedButton';
+import Card, { CardActions, CardContent } from 'material-ui-next/Card';
+import Button from 'material-ui-next/Button';
+import TextField from 'material-ui-next/TextField';
 import { withFormik } from 'formik';
 import './Login.scss';
 import LogoImage from './logo-white.png';
 import { Link } from 'react-router-dom';
 import { inject, observer } from 'mobx-react';
-import RefreshIndicator from 'material-ui/RefreshIndicator';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
+import Select from 'material-ui-next/Select';
+import { MenuItem, MenuList } from 'material-ui-next/Menu';
 import { Route, Redirect } from 'react-router';
+import { FormControl, FormHelperText } from 'material-ui-next/Form';
+import Input, { InputLabel } from 'material-ui-next/Input';
+import { withStyles } from 'material-ui-next/styles';
+
+const styles = theme => ({
+    root: {
+      display: 'flex',
+      flexWrap: 'wrap',
+    },
+    formControl: {
+      margin: theme.spacing.unit,
+      minWidth: 120,
+    }
+});
 
 const InnerForm = (props) => {
     const {
@@ -36,21 +48,22 @@ const InnerForm = (props) => {
       </div>
       <div>
         <TextField
-            type="password"
-            name="password"
-            hintText="Password"
-            onChange={handleChange}
-            onBlur={handleBlur}
-            value={values.password}
-            className="form-input"
+          label="Password"
+          className="form-input"
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={values.password}
+          margin="normal"
+          type="password"
+          name="password"
         />
       </div>
-      <RaisedButton
-        label="Login"
+      <Button
         type="submit"
-        backgroundColor="#0CCE6B"
-        labelColor="#FFFFFF"
-        className="form-submit"/>
+        variant="raised"
+        className="form-submit">
+        Login
+        </Button>
     </form>
 )
 };
@@ -83,42 +96,29 @@ const MyForm = withFormik({
   })(InnerForm);
 
 class SelectComponent extends Component {
-    handleChange = (event, index, value) => {
-        this.props.onChange('email', value)
+    handleChange = (event) => {
+        this.props.onChange('email', event.target.value)
     }
 
     render() {
         return (
-            <SelectField
-                floatingLabelText="Email"
-                value={this.props.value}
-                onChange={this.handleChange}
-                style={{
-                    fullWidth: true
-                }}
-                labelStyle={{
-                    textAlign: 'left'
-                }}
-                selectedMenuItemStyle={{
-                    textAlign: 'left'
-                }}
-                menuItemStyle={{
-                    textAlign: 'left'
-                }}
-                floatingLabelStyle={{
-                    left: '0'
-                }}
-            >
+            <FormControl>
+                <InputLabel htmlFor="email-select">Email</InputLabel>
+                <Select
+                    value={this.props.value}
+                    onChange={this.handleChange}
+                    inputProps={{
+                        name: 'email',
+                        id: 'email-select',
+                    }}
+                >
                 {
                     this.props.items.map((item) => {
-
-                        return <MenuItem value={item}
-                            primaryText={item}
-                            key={item} 
-                            insetChildren={true}/>
+                        return <MenuItem value={item} key={item}>{item}</MenuItem>
                     })
                 }
-            </SelectField>
+                </Select>
+            </FormControl>
         )
     }
 }
@@ -151,11 +151,11 @@ class Login extends Component {
                         <div className="column is-4 is-offset-4">
                             <img src={LogoImage} className="logo-image" alt="Logo" />
                             <Card>
-                                <CardText>
+                                <CardContent>
                                     {
                                         this.store.users.length > 0 ? <MyForm store={this.store}/> : null
                                     }
-                                </CardText>
+                                </CardContent>
                             </Card>
                             <div className="register-link-container">
                                 <Link to="/register"  className="register-link">Create new account</Link>
@@ -168,4 +168,4 @@ class Login extends Component {
     }
 }
 
-export default inject(['auth'])(observer(Login));;
+export default withStyles(styles)(inject(['auth'])(observer(Login)));

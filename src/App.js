@@ -4,7 +4,6 @@ import './App.scss';
 import { inject, observer } from 'mobx-react';
 import routes from './Router';
 import { BrowserRouter as Router, Route, Link, withRouter } from "react-router-dom";
-import AppBar from 'material-ui/AppBar';
 
 const RouteWithSubRoutes = route => (
     <Route
