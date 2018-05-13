@@ -48,7 +48,6 @@ const InnerForm = (props) => {
       <RaisedButton
         label="Login"
         type="submit"
-        disabled={isSubmitting} 
         backgroundColor="#0CCE6B"
         labelColor="#FFFFFF"
         className="form-submit"/>

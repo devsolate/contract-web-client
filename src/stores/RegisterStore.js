@@ -21,15 +21,21 @@ export default class RegisterStore {
       })
       .then((response) => {
         
-        db.users.add({
-            name: name,
-            email: email,
-            encryptedSecretKey: response.data.encryptedSecretKey
-        }).then((result) => {
-            console.log("Users Saved:", email)
-        }).catch(error => {
-            console.error(error)
-        })
+        db.users
+            .where("email")
+            .anyOf(email)
+            .delete()
+            .then((result) => {
+                db.users.add({
+                    name: name,
+                    email: email,
+                    encryptedSecretKey: response.data.encryptedSecretKey
+                }).then((result) => {
+                    console.log("Users Saved:", email)
+                }).catch(error => {
+                    console.error(error)
+                })
+            });
         
         this.isLoading = false;
         this.isSuccess = true;

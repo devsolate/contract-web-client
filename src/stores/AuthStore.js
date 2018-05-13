@@ -12,6 +12,7 @@ export default class AuthStore {
   isLoading = false;
   isSuccess = false;
   isUserLoaded = false;
+  isAuthLoaded = false;
   users = [];
   accounts = [];
 
@@ -22,28 +23,42 @@ getUsers() {
         this.users = users.map((item) => item.email)
         this.accounts = users;
         this.isUserLoaded = true;
-        
     })
   }
 
-  auth({ email, password }) {
+  async auth({ email, password }) {
     this.isLoading = true;
     this.isSuccess = false;
 
     const account = _.find(this.accounts, (item) => item.email == email)
-    const bytes = CryptoJS.AES.decrypt(account.encryptedSecretKey.toString(), password);
+    const bytes = await CryptoJS.AES.decrypt(account.encryptedSecretKey.toString(), password);
     const result = bytes.toString();
     if(result) {
+        console.log("Login Success")
         // Login Success
         this.isLoading = false;
         this.isSuccess = true;
 
         window.sessionStorage.setItem("currentUser", email);
     } else {
+        console.log("Login Failed")
         // Login Failed 
         this.isLoading = false;
         this.isSuccess = false;
     }
+  }
+
+  init() {
+    const current = window.sessionStorage.getItem("currentUser");
+    if(current) {
+        this.isLoading = false
+        this.isSuccess = true
+    } else {
+        this.isLoading = false
+        this.isSuccess = false
+    }
+
+    this.isAuthLoaded = true
   }
 
   get isAuthorized() {
@@ -53,12 +68,18 @@ getUsers() {
   get isRequireRegister() {
     return this.isUserLoaded && this.users.length === 0;
   }
+
+  get isRequireLogin() {
+    return this.isAuthLoaded && !this.isSuccess
+  }
 }
 
 decorate(AuthStore, {
     isLoading: observable,
     isSuccess: observable,
     users: observable,
+    isAuthLoaded: observable,
     isAuthorized: computed,
     isRequireRegister: computed,
+    isRequireLogin: computed
 });

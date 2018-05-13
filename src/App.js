@@ -24,15 +24,16 @@ class App extends Component {
     }
 
     componentDidMount() {
-       console.log(window.sessionStorage.getItem("currentUser"));
+        this.props.auth.init()
     }
-  render() {
-    return (
-      <div className="App">
-        {routes.map((route, i) => <RouteWithSubRoutes key={i} {...route} />)}
-      </div>
-    );
-  }
+
+    render() {
+        return (
+            <div className="App">
+                {routes.map((route, i) => <RouteWithSubRoutes key={i} {...route} />)}
+            </div>
+        );
+    }
 }
 
-export default inject(['routing'])(withRouter(observer(App)));
+export default inject(['auth'])(withRouter(observer(App)));
